@@ -86,7 +86,24 @@ function lolfish -d "such rainbow. very newline. wow"
     set_color normal
 end
 
+set -g __fish_git_prompt_showdirtystate 'yes'
+set -g __fish_git_prompt_char_dirtystate '±'
+set -g __fish_git_prompt_char_cleanstate ''
 
+function parse_git_dirty
+  set -l submodule_syntax
+  set submodule_syntax "--ignore-submodules=dirty"
+  set git_dirty (command git status --porcelain $submodule_syntax  2> /dev/null)
+  if [ -n "$git_dirty" ]
+    if [ $__fish_git_prompt_showdirtystate = "yes" ]
+      echo -n "$__fish_git_prompt_char_dirtystate"
+    end
+  else
+    if [ $__fish_git_prompt_showdirtystate = "yes" ]
+      echo -n "$__fish_git_prompt_char_cleanstate"
+    end
+  end
+end
 
 function fish_prompt
 
@@ -105,17 +122,18 @@ function fish_prompt
     end
 
     # the git stuff
-    # TODO: use git's built in prompt support
-    if command -s git > /dev/null ^&1
-        if git rev-parse --git-dir > /dev/null ^&1
-            set -l git_branch (git rev-parse --abbrev-ref HEAD ^/dev/null)
-            set -l git_status (count (git status -s --ignore-submodules ^/dev/null))
-            if test $git_status -gt 0
-                set git_dir '[' $git_branch ':' $git_status ']'
-            else
-                set git_dir '[' $git_branch ']'
-            end
-        end
+    set -l ref
+    set -l dirty
+    if command git rev-parse --is-inside-work-tree >/dev/null 2>&1
+      set dirty (parse_git_dirty)
+      set ref (command git symbolic-ref HEAD 2> /dev/null)
+      if [ $status -gt 0 ]
+        set -l branch (command git show-ref --head -s --abbrev |head -n1 2> /dev/null)
+        set ref "➦ $branch "
+      end
+      set branch_symbol \uE0A0
+      set -l branch (echo $ref | sed  "s-refs/heads/-$branch_symbol -")
+      set git_dir "$branch $dirty"
     end
 
     # hashtag the prompt for root user
