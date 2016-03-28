@@ -51,8 +51,16 @@ function lolfish -d "such rainbow. very newline. wow"
 
         # print these special characters in normal color
         switch $arg
-            case ' ' \( \) \[ \] \: \@ \{ \} \/
-                set_color normal
+            case ' ' \( \) \[ \] \$ \# \@ \{ \} \/ \n
+                set_color -o normal
+                echo -n -s $arg
+                continue
+            case ✓
+                set_color -o green
+                echo -n -s $arg
+                continue
+            case ✗
+                set_color -o red
                 echo -n -s $arg
                 continue
         end
@@ -82,10 +90,11 @@ end
 
 function fish_prompt
 
-    # last command had an error? display the return value
+    # I like to always display the return value. Plus a big X if it's an error.
     set -l exit_status $status
-    if test $exit_status -ne 0
-        set error '(' $exit_status ')'
+    set -l exit_glyph '✗'
+    if test $exit_status = 0
+        set exit_glyph '✓'
     end
 
     # abbreviated home directory ~
@@ -114,9 +123,9 @@ function fish_prompt
         case 'root'
             set prompt '#'
         case '*'
-            set prompt '>>'
+            set prompt '$'
     end
 
     # finally print the prompt
-    lolfish $USER '@' (hostname -s) ':' $current_dir $git_dir $error $prompt ' '
+    lolfish $exit_status ' ' $exit_glyph ' ' $current_dir ' ' $git_dir \n $USER '@' (hostname -s) ' ' $prompt ' '
 end

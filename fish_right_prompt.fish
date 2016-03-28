@@ -13,7 +13,7 @@ function fish_right_prompt
     #
     set -l background_jobs (count (jobs -p ^/dev/null))
     if test $background_jobs -gt 0
-        set background_jobs_prompt '[' '&' ':' $background_jobs ']'
+        set background_jobs_prompt '[' '&' ':' $background_jobs '] '
     end
 
     #
@@ -24,7 +24,7 @@ function fish_right_prompt
         if command -s tmux > /dev/null ^&1
             set -l tmux_sessions (count (tmux list-sessions ^/dev/null))
             if test $tmux_sessions -gt 0
-                set tmux_sessions_prompt '[' 'tmux' ':' $tmux_sessions ']'
+                set tmux_sessions_prompt '[' '>_' ':' $tmux_sessions '] '
             end
         end
     end
