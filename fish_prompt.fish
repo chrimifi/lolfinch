@@ -67,7 +67,7 @@ function lolfish -d "such rainbow. very newline. wow"
             set color 1
         end
 
-        set_color $colors[$color]
+        set_color -o $colors[$color]
         echo -n -s $arg
         set color (math $color + $color_step)
     end
