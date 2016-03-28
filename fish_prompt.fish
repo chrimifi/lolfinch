@@ -1,8 +1,8 @@
-# prompt name: lolfish
+# prompt name: lolfinch
 # prompt requires: jobs (fish builtin), git, hostname, sed
 
 
-function lolfish -d "such rainbow. wow"
+function lolfish -d "such rainbow. very newline. wow"
 
     # xterm-256color RGB color values
     # valid R G B hex values : 00, 57, 87, af, d7, ff
